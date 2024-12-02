@@ -1,0 +1,13 @@
+{
+  "name": "invoice-creator",
+  "version": "1.0.0",
+  "main": "index.mjs",
+  "license": "MIT",
+  "dependencies": {
+    "date-fns": "^4.1.0",
+    "puppeteer": "^23.9.0"
+  },
+  "scripts": {
+    "start": "node ./index.mjs"
+  }
+}

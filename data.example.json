@@ -1,0 +1,19 @@
+{
+  "contratada": {
+    "nome": "XXX",
+    "email": "XXX",
+    "cep": "XXXXX-XXX",
+    "cidade": "XXX",
+    "rua": "XXX",
+    "complemento": " "
+  },
+  "contratante": {
+    "nome": "77 DIAMONDS LIMITED",
+    "endereco": "2nd Floor, 3 Hanover Square, London, W1S 1HD"
+  },
+  "servico": {
+    "descricao": "Technical services of technologies consulting\n\n Account Number: XXXX\nIBAN: XXXX XXXX XXXX XXXX",
+    "moeda": "2",
+    "valor": 0
+  }
+}
