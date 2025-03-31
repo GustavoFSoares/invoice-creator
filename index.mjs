@@ -13,6 +13,24 @@ async function run() {
   const history = await loadJson("history");
   const data = await loadJson("data");
 
+  let overtimeAmount = 0;
+  const overtimeText = process.argv[2];
+  const [overtimeHour, overtimeMinute] = overtimeText.split(":");
+
+  if (data.extra.usarExtra) {
+    let overtime = 0;
+    if (overtimeHour) {
+      overtime += Number(overtimeHour);
+    }
+
+    if (overtimeMinute) {
+      overtime += Number(overtimeMinute) / 60;
+    }
+
+    overtimeAmount =
+      overtime * data.extra.valorHoraExtra * data.servico.valorHoraNormal;
+  }
+
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
 
@@ -23,14 +41,14 @@ async function run() {
 
   await page.locator(".tab-link-tab-2").click();
 
-  await page.waitForFunction(
-    () => {
-      const tab = document.querySelector(".tab-pane-tab-2");
+  // await page.waitForFunction(
+  //   () => {
+  //     const tab = document.querySelector(".tab-pane-tab-2");
 
-      return tab && tab.style.opacity === "1";
-    },
-    { timeout: 5000, polling: true }
-  );
+  //     return tab && tab.style.opacity === "1";
+  //   },
+  //   { timeout: 5000, polling: true }
+  // );
 
   await page.locator("#value-usd-2").fill(data.contratada.nome);
   await page.locator("#email2").fill(data.contratada.email);
@@ -51,19 +69,24 @@ async function run() {
   const emissionDate = format(now, "MM/dd/yyyy");
   const dueDate = format(addDays(now, 5), "MM/dd/yyyy");
 
-  console.log({
-    emissionDate,
-    dueDate,
-  });
-
   await page
     .locator(".column #Company-who-s-paying-4")
     .fill(lastInvoice.toString());
   await page.locator(".column #emission-date-en").fill(emissionDate);
   await page.locator(".column #due-date-en").fill(dueDate);
-  await page.locator("#field-2").fill(data.servico.descricao);
+
+  let description = data.servico.descricao;
+  if (overtimeAmount) {
+    description += "EXTRA:\n";
+    description += `Overtime: ${overtimeHour}h${overtimeMinute}m\n`;
+    description += `Amount: €${overtimeAmount.toFixed(2)}`;
+  }
+  await page.locator("#field-2").fill(description);
+
   await page.locator(".select-currency-en").fill(data.servico.moeda);
-  await page.locator(".input-value").fill(data.servico.valor.toString());
+  await page
+    .locator(".input-value")
+    .fill((data.servico.valor + overtimeAmount).toFixed(2).toString());
 
   await page.locator("#en_lead_gerador_invoice").click();
 
