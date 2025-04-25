@@ -14,7 +14,8 @@ async function run() {
   const data = await loadJson("data");
 
   let overtimeAmount = 0;
-  const overtimeText = process.argv[2] || 0;
+  const overtimeText = process.argv[2] || "0";
+
   const [overtimeHour, overtimeMinute] = overtimeText.split(":");
 
   if (data.extra.usarExtra) {
